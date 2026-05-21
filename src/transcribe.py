@@ -2,28 +2,27 @@ import os
 from yt_dlp import YoutubeDL
 from faster_whisper import WhisperModel
 import json
+import os
 
-def download_audio_for_transcription(url, output_dir="temp_downloads"):
+def download_audio_for_transcription(url):
     """
-    Downloads a lightweight audio file optimized for speech recognition.
+    Downloads a lightweight audio file into the current working directory
+    with a fixed base name 'temp_audio'.
     """
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
-
-    # We target 'worstaudio' or standard low-bitrate m4a/webm because Whisper 
-    # internally resamples everything to 16kHz mono anyway.
+    # Fixes the name to 'temp_audio', but keeps the extension flexible 
+    # based on whatever low-bitrate format yt-dlp grabs (.m4a or .webm)
     ydl_opts = {
         'format': 'worstaudio[ext=m4a]/worstaudio[ext=webm]/worst',
-        'outtmpl': os.path.join(output_dir, '%(title)s.%(ext)s'),
-        'postprocessors': [], # No heavy re-encoding needed
+        'outtmpl': 'temp_audio.%(ext)s', 
+        'postprocessors': [],
         'quiet': False,
+        'overwrites': True, # Overwrites old temp_audio files from previous runs
     }
 
     print(f"Downloading audio from: {url}")
     with YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(url, download=True)
-        # Fetch the absolute path of the downloaded file
-        filename = ydl.prepare_filename(info)
+        filename = os.path.abspath(ydl.prepare_filename(info))
         return filename
 
 def transcribe_audio(audio_path, model_size="base"):
@@ -73,6 +72,8 @@ if __name__ == "__main__":
         transcript = transcribe_audio(audio_file, model_size="small")
         
         print(f"\n--- Transcription Finished ---")
+
+        os.remove("temp_audio.m4a")
         
     except Exception as e:
         print(f"An error occurred: {e}")
