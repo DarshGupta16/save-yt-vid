@@ -17,6 +17,11 @@ def download_audio_for_transcription(url):
         'postprocessors': [],
         'quiet': False,
         'overwrites': True, # Overwrites old temp_audio files from previous runs
+        'extractor_args': {
+            'youtube': {
+                'clients': ['ios', 'android', 'web']
+            }
+        }
     }
 
     print(f"Downloading audio from: {url}")
@@ -59,9 +64,9 @@ def transcribe_audio(audio_path, model_size="base"):
 
 if __name__ == "__main__":
     # Replace with any YouTube URL or supported video platform link
-    video_url = "https://www.youtube.com/watch?v=dW6pvUx4_jc"
-    # with open('queue.json', 'r') as queueFile:
-    #     video_url = json.loads(queueFile.read()).queue[0]
+    video_url = ""
+    with open('src/queue.json', 'r') as queueFile:
+        video_url = json.loads(queueFile.read())["queue"][0]["url"]
     
     try:
         # Step 1: Download the lightweight audio file
