@@ -29,16 +29,11 @@ configureModal({
 let foundTarget = false;
 
 const save = async () => {
-  alert("Saving to Obsidian!");
   const response = await fetch(
     `http://localhost:3000/save-video?url=${window.location.href}&mode=${mode}`,
   );
   const responseJson = await response.json();
-  if (responseJson.queued) {
-    alert(
-      "Video queued for processing! It will be saved to Obsidian within the next hour.",
-    );
-  } else {
+  if (!responseJson.queued) {
     alert("Failed to queue video for processing: " + responseJson.error);
   }
 };

@@ -2,21 +2,24 @@ import os
 from yt_dlp import YoutubeDL
 from faster_whisper import WhisperModel
 import json
-import os
+import datetime
+import traceback
+
+def log_error(error_msg):
+    with open('error.log', 'a') as f:
+        f.write(f"{datetime.datetime.now().isoformat()}: [Python Whisper Error] {error_msg}\n")
 
 def download_audio_for_transcription(url):
     """
     Downloads a lightweight audio file into the current working directory
     with a fixed base name 'temp_audio'.
     """
-    # Fixes the name to 'temp_audio', but keeps the extension flexible 
-    # based on whatever low-bitrate format yt-dlp grabs (.m4a or .webm)
     ydl_opts = {
         'format': 'worstaudio[ext=m4a]/worstaudio[ext=webm]/worst',
         'outtmpl': 'temp_audio.%(ext)s', 
         'postprocessors': [],
         'quiet': False,
-        'overwrites': True, # Overwrites old temp_audio files from previous runs
+        'overwrites': True, 
         'extractor_args': {
             'youtube': {
                 'clients': ['ios', 'android', 'web']
@@ -36,8 +39,6 @@ def transcribe_audio(audio_path, model_size="base"):
     """
     print(f"\nInitializing Whisper model ({model_size})...")
     
-    # Automatically switch to GPU (cuda) if available, otherwise use CPU.
-    # float16 is faster on GPU, int8 is highly optimized for CPU.
     import torch
     device = "cuda" if torch.cuda.is_available() else "cpu"
     compute_type = "float16" if device == "cuda" else "int8"
@@ -45,12 +46,10 @@ def transcribe_audio(audio_path, model_size="base"):
     model = WhisperModel(model_size, device=device, compute_type=compute_type)
 
     print("Transcribing... (this may take a moment)")
-    # beam_size=5 is a good balance of accuracy and speed
     segments, info = model.transcribe(audio_path, beam_size=5)
 
     print(f"Detected language: '{info.language}' with probability {info.language_probability:.2f}")
 
-    # Process and print the text chunks with timestamps
     full_transcript = []
     for segment in segments:
         timestamp = f"[{segment.start:05.2f}s -> {segment.end:05.2f}s]"
@@ -63,22 +62,23 @@ def transcribe_audio(audio_path, model_size="base"):
     return " ".join(full_transcript)
 
 if __name__ == "__main__":
-    # Replace with any YouTube URL or supported video platform link
-    video_url = ""
-    with open('packages/server/src/queue.json', 'r') as queueFile:
-        video_url = json.loads(queueFile.read())["queue"][0]["url"]
-    
     try:
+        video_url = ""
+        with open('src/queue.json', 'r') as queueFile:
+            video_url = json.loads(queueFile.read())["queue"][0]["url"]
+        
         # Step 1: Download the lightweight audio file
         audio_file = download_audio_for_transcription(video_url)
         
         # Step 2: Run faster-whisper transcription
-        # Model choices: 'tiny', 'base', 'small', 'medium', 'large-v3'
         transcript = transcribe_audio(audio_file, model_size="small")
         
         print(f"\n--- Transcription Finished ---")
 
-        os.remove("temp_audio.m4a")
+        if os.path.exists("temp_audio.m4a"):
+            os.remove("temp_audio.m4a")
         
     except Exception as e:
         print(f"An error occurred: {e}")
+        log_error(traceback.format_exc())
+        raise e
