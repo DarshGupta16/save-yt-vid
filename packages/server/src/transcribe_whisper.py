@@ -65,7 +65,7 @@ def transcribe_audio(audio_path, model_size="base"):
 if __name__ == "__main__":
     # Replace with any YouTube URL or supported video platform link
     video_url = ""
-    with open('src/queue.json', 'r') as queueFile:
+    with open('packages/server/src/queue.json', 'r') as queueFile:
         video_url = json.loads(queueFile.read())["queue"][0]["url"]
     
     try:

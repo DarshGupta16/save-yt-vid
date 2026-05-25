@@ -55,7 +55,7 @@ const processNext = async () => {
   // Get transcription
   console.log("Getting transcription...");
   const { stderr, stdout } = await execAsync(
-    `python src/transcribe_${queue[0].mode}.py`,
+    `python packages/server/src/transcribe_${queue[0].mode}.py`,
   );
   if (stderr) {
     console.error(`Error processing ${queue[0].url}:`, stderr);

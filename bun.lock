@@ -4,16 +4,28 @@
   "workspaces": {
     "": {
       "name": "save-yt-vid",
-      "dependencies": {
-        "dotenv": "^17.4.2",
-        "hono": "^4.12.21",
-      },
       "devDependencies": {
         "@types/bun": "latest",
       },
     },
+    "packages/server": {
+      "name": "@save-yt-vid/server",
+      "version": "1.0.0",
+      "dependencies": {
+        "dotenv": "^17.4.2",
+        "hono": "^4.12.21",
+      },
+    },
+    "packages/userscript": {
+      "name": "@save-yt-vid/userscript",
+      "version": "1.0.0",
+    },
   },
   "packages": {
+    "@save-yt-vid/server": ["@save-yt-vid/server@workspace:packages/server"],
+
+    "@save-yt-vid/userscript": ["@save-yt-vid/userscript@workspace:packages/userscript"],
+
     "@types/bun": ["@types/bun@1.3.14", "", { "dependencies": { "bun-types": "1.3.14" } }, "sha512-h1hFqFVcvAvD9j9K7ZW7vd82aSA+rTdznZa+5bwvCwqSB1jmmfLcbIWhOLx1/+boy/xmjgCs/OMUL8hRJSmnPw=="],
 
     "@types/node": ["@types/node@25.9.1", "", { "dependencies": { "undici-types": ">=7.24.0 <7.24.7" } }, "sha512-xfrlY7UD5rMJk3ZVJP8BNzS28J36YJg+xp+LPXV1TdWxr8uMH5A860QNxYDGQe/ylDSgjxE52Q9VnO7p75tJxg=="],

@@ -6,7 +6,7 @@ import { readFileSync, unlinkSync } from "fs";
 export async function summarizeTranscription() {
   const transcription = readFileSync("transcript.txt", "utf8");
   const summarizationPrompt = readFileSync(
-    "src/summarization_prompt.txt",
+    "packages/server/src/summarization_prompt.txt",
     "utf8",
   );
 

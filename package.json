@@ -1,11 +1,10 @@
 {
   "name": "save-yt-vid",
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
-    "dev": "bun run --hot src/index.ts"
-  },
-  "dependencies": {
-    "dotenv": "^17.4.2",
-    "hono": "^4.12.21"
+    "dev": "bun run --filter @save-yt-vid/server dev"
   },
   "devDependencies": {
     "@types/bun": "latest"
