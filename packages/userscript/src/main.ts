@@ -1,32 +1,29 @@
 import { configureSaveButton } from "./utils/configureSaveButton";
-import { configureDropdownButton } from "./utils/configureDropdownButton";
+import { configureModal } from "./utils/configureModal";
 import { reattachWatcherFn } from "./utils/reattachWatcherFn";
 
 console.log("Let me see if this works haha!");
 
 const saveButton = document.createElement("button");
-const dropdown = document.createElement("div");
+const modalOverlay = document.createElement("div");
 
 let mode: "api" | "whisper" = "api";
-configureSaveButton({ saveButton, dropdown });
+configureSaveButton(saveButton, modalOverlay);
 
 function handleUseAPI() {
   mode = "api";
   save();
-  // Your logic here
 }
 
 function handleUseWhisper() {
   mode = "whisper";
   save();
-  // Your logic here
 }
 
-configureDropdownButton({
-  dropdown,
+configureModal({
+  modalOverlay,
   handleUseAPI,
   handleUseWhisper,
-  saveButton,
 });
 
 let foundTarget = false;

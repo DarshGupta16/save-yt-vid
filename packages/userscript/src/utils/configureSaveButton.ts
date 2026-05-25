@@ -1,6 +1,6 @@
 export function configureSaveButton(
-  {saveButton,
-  dropdown,}:{saveButton: HTMLButtonElement; dropdown:HTMLDivElement}
+  saveButton: HTMLButtonElement,
+  modalOverlay: HTMLDivElement,
 ) {
   saveButton.textContent = "Save to Obsidian";
   saveButton.setAttribute("id", "obsidian-save-button");
@@ -79,7 +79,6 @@ export function configureSaveButton(
   saveButton.addEventListener("click", (e) => {
     e.stopPropagation();
 
-    dropdown.style.display =
-      dropdown.style.display === "flex" ? "none" : "flex";
+    modalOverlay.style.display = "flex";
   });
 }
