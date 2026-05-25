@@ -4,7 +4,9 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "bun run --filter @save-yt-vid/server dev"
+    "dev": "bun run --filter @save-yt-vid/server dev",
+    "userscript:dev": "bun run --filter @save-yt-vid/userscript dev",
+    "userscript:build": "bun run --filter @save-yt-vid/userscript build"
   },
   "devDependencies": {
     "@types/bun": "latest"

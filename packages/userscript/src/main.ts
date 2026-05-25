@@ -1,19 +1,9 @@
-// ==UserScript==
-// @name        Save YouTube Video to Obsidian
-// @namespace   Violentmonkey Scripts
-// @icon        https://www.youtube.com/s/desktop/5af4fee3/img/favicon.ico
-// @version     1.0.0
-//
-// @match       https://www.youtube.com/watch*
-// @grant       none
-//
-// @author      -
-// @description Save YouTube videos to Obsidian
-// ==/UserScript==
 const saveButton = document.createElement("button");
 saveButton.textContent = "Save to Obsidian";
 
 let mode: "api" | "whisper" = "api";
+
+console.log("Let me see if this works haha!!");
 
 saveButton.setAttribute(
   "style",

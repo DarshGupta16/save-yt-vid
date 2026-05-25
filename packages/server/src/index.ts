@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { cors } from "hono/cors";
 import { exec } from "child_process";
 import { promisify } from "util";
 import { readFileSync, writeFileSync } from "fs";
@@ -11,12 +12,14 @@ configDotenv();
 const execAsync = promisify(exec);
 const app = new Hono();
 
+app.use("*", cors());
+
 interface QueueLinkObject {
   url: string;
   mode: "api" | "whisper";
 }
 
-const queueFileAddress = "src/queue.json";
+const queueFileAddress = "packages/server/src/queue.json";
 const errorLogFileAddress = "error.log";
 
 const data = readFileSync(queueFileAddress, "utf8");

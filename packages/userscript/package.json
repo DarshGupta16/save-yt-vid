@@ -1,5 +1,13 @@
 {
   "name": "@save-yt-vid/userscript",
   "version": "1.0.0",
-  "dependencies": {}
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "vite": "^8.0.14",
+    "vite-plugin-monkey": "^8.0.5"
+  }
 }
