@@ -7,7 +7,9 @@ import { sleep } from "bun";
 import { summarizeTranscription } from "./groq";
 import { configDotenv } from "dotenv";
 
-configDotenv({ path: import.meta.dir + "/../.env" });
+// Ensure we are always running from the package directory
+process.chdir(import.meta.dir + "/..");
+configDotenv();
 
 const execAsync = promisify(exec);
 const app = new Hono();
