@@ -2,7 +2,8 @@
   "name": "@save-yt-vid/server",
   "version": "1.0.0",
   "scripts": {
-    "dev": "bun run --hot src/index.ts"
+    "dev": "bun run --hot src/index.ts",
+    "build": "bun build ./src/index.ts --target=bun --outdir=./dist"
   },
   "dependencies": {
     "dotenv": "^17.4.2",
