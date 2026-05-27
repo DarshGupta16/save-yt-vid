@@ -9,6 +9,6 @@
     "userscript:build": "bun run --filter @save-yt-vid/userscript build"
   },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "^1.3.14"
   }
 }

@@ -3,13 +3,12 @@ import { cors } from "hono/cors";
 import { exec } from "child_process";
 import { promisify } from "util";
 import { readFileSync, writeFileSync } from "fs";
-import { sleep } from "bun";
+import { join } from "path";
 import { summarizeTranscription } from "./groq";
 import { configDotenv } from "dotenv";
 
-// Ensure we are always running from the package directory
-process.chdir(import.meta.dir + "/..");
-configDotenv();
+const packageRoot = join(import.meta.dir, "..");
+configDotenv({ path: join(packageRoot, ".env") });
 
 const execAsync = promisify(exec);
 const app = new Hono();
@@ -21,8 +20,8 @@ interface QueueLinkObject {
   mode: "api" | "whisper";
 }
 
-const queueFileAddress = "src/queue.json";
-const errorLogFileAddress = "error.log";
+const queueFileAddress = join(packageRoot, "src/queue.json");
+const errorLogFileAddress = join(packageRoot, "error.log");
 
 const data = readFileSync(queueFileAddress, "utf8");
 let queue = JSON.parse(data).queue as QueueLinkObject[];
@@ -46,7 +45,21 @@ app.get("/save-video", (c) => {
   }
 });
 
-export default app;
+// Explicitly serve instead of relying on default export so PM2 boots it properly
+export default {
+  port: 3000,
+  fetch: app.fetch,
+};
+
+try {
+  Bun.serve({
+    port: 3000,
+    fetch: app.fetch,
+  });
+  console.log("Started Hono server on port 3000");
+} catch (e) {
+  // Ignore Address in use errors if `export default` also started the server
+}
 
 // ------------------------- Queue Processing -------------------------
 const processNext = async () => {
@@ -60,8 +73,11 @@ const processNext = async () => {
 
     // Get transcription
     console.log("Getting transcription...");
+    const pythonPath = join(packageRoot, ".venv/bin/python");
+    const scriptPath = join(packageRoot, `src/transcribe_${queue[0].mode}.py`);
     const { stderr, stdout } = await execAsync(
-      `./.venv/bin/python src/transcribe_${queue[0].mode}.py`,
+      `${pythonPath} ${scriptPath}`,
+      { cwd: packageRoot }
     );
     if (stderr) {
       console.error(`Error processing ${queue[0].url}:`, stderr);
